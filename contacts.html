@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Контакты | ЗвукоСлово</title>
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box;}
+        :root{
+            --primary:#2c3e66;
+            --primary-dark:#1a2a44;
+            --accent:#e67e22;
+            --accent-dark:#b85e0a;
+            --text:#2c3e50;
+            --text-light:#5a6c7e;
+            --bg:#ffffff;
+            --bg-light:#f8f9fc;
+            --border:#e1e8ed;
+            --success:#27ae60;
+            --error:#e74c3c;
+            --focus:#e67e22;
+            --shadow:0 10px 30px rgba(0,0,0,0.08);
+            --radius:16px;
+        }
+        body{
+            font-family:'Segoe UI',sans-serif;
+            color:var(--text);
+            background:var(--bg);
+            min-height:100vh;
+            display:flex;
+            flex-direction:column;
+        }
+        .skip-link{
+            position:absolute;top:-40px;left:20px;
+            background:var(--primary);color:white;
+            padding:10px 20px;border-radius:30px;
+            text-decoration:none;z-index:200;
+        }
+        .skip-link:focus{top:20px;outline:3px solid var(--focus);}
+        .header{
+            background:rgba(255,255,255,0.95);
+            backdrop-filter:blur(10px);
+            border-bottom:1px solid var(--border);
+            position:sticky;top:0;z-index:100;
+            padding:0 24px;
+        }
+        .nav-container{
+            max-width:1280px;margin:0 auto;
+            display:flex;justify-content:space-between;
+            align-items:center;height:72px;
+        }
+        .logo{
+            font-size:1.6rem;font-weight:800;
+            background:linear-gradient(135deg,var(--primary),var(--accent));
+            -webkit-background-clip:text;
+            background-clip:text;
+            color:transparent;
+            text-decoration:none;
+        }
+        .nav-links{display:flex;gap:32px;list-style:none;}
+        .nav-links a{
+            text-decoration:none;color:var(--text);
+            font-weight:500;padding:8px 0;
+            border-bottom:2px solid transparent;
+        }
+        .nav-links a:hover,.nav-links a:focus-visible{
+            border-bottom-color:var(--accent);
+            color:var(--accent);
+            outline:none;
+        }
+        .nav-links a.active{
+            color:var(--accent);
+            border-bottom-color:var(--accent);
+        }
+        .main-content{flex:1;max-width:1280px;margin:0 auto;padding:48px 24px;width:100%;}
+        .page-header{text-align:center;margin-bottom:48px;}
+        .page-header h1{font-size:2.2rem;color:var(--primary);margin-bottom:12px;}
+        
+        .contacts-grid{
+            display:grid;
+            grid-template-columns:1fr 1fr;
+            gap:48px;
+        }
+        .contact-card{
+            background:var(--bg-light);
+            border-radius:var(--radius);
+            padding:32px;
+            border:1px solid var(--border);
+        }
+        .contact-card h2{color:var(--primary);margin-bottom:24px;font-size:1.4rem;}
+        .info-list{list-style:none;}
+        .info-list li{
+            display:flex;
+            align-items:center;
+            gap:16px;
+            padding:14px 0;
+            border-bottom:1px solid var(--border);
+        }
+        .info-icon{
+            width:45px;height:45px;
+            background:white;
+            border-radius:50%;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            font-size:1.3rem;
+            box-shadow:var(--shadow);
+        }
+        .form-group{margin-bottom:24px;}
+        label{display:block;margin-bottom:8px;font-weight:600;color:var(--primary);}
+        .required{color:var(--error);}
+        input,textarea,select{
+            width:100%;
+            padding:14px 16px;
+            border:2px solid var(--border);
+            border-radius:12px;
+            font-size:1rem;
+            font-family:inherit;
+            transition:0.2s;
+        }
+        input:focus,textarea:focus,select:focus{
+            outline:none;
+            border-color:var(--accent);
+            box-shadow:0 0 0 3px rgba(230,126,34,0.1);
+        }
+        input:valid:not(:placeholder-shown){border-color:var(--success);}
+        input:invalid:not(:placeholder-shown){border-color:var(--error);}
+        textarea:valid:not(:placeholder-shown){border-color:var(--success);}
+        textarea:invalid:not(:placeholder-shown){border-color:var(--error);}
+        .error-message{
+            color:var(--error);
+            font-size:0.8rem;
+            margin-top:6px;
+            display:none;
+        }
+        input:invalid:not(:placeholder-shown)+.error-message,
+        textarea:invalid:not(:placeholder-shown)+.error-message{
+            display:block;
+        }
+        .btn-submit{
+            background:var(--accent);
+            color:white;
+            border:none;
+            padding:14px 36px;
+            border-radius:50px;
+            font-size:1rem;
+            font-weight:600;
+            cursor:pointer;
+            transition:0.2s;
+            width:100%;
+        }
+        .btn-submit:hover,.btn-submit:focus-visible{
+            background:var(--accent-dark);
+            outline:3px solid var(--focus);
+            transform:translateY(-2px);
+        }
+        .form-status{
+            margin-top:20px;
+            padding:14px;
+            border-radius:12px;
+            display:none;
+            text-align:center;
+        }
+        .form-status.success{
+            display:block;
+            background:#d4edda;
+            color:#155724;
+            border:1px solid #c3e6cb;
+        }
+        .form-status.error{
+            display:block;
+            background:#f8d7da;
+            color:#721c24;
+            border:1px solid #f5c6cb;
+        }
+        .map-placeholder{
+            margin-top:24px;
+            background:white;
+            padding:20px;
+            border-radius:12px;
+            text-align:center;
+            border:1px solid var(--border);
+        }
+        .footer{
+            background:var(--primary-dark);
+            color:white;
+            text-align:center;
+            padding:48px 24px;
+            margin-top:auto;
+        }
+        @media (max-width:768px){
+            .nav-container{flex-direction:column;height:auto;padding:16px 0;gap:16px;}
+            .nav-links{gap:24px;}
+            .main-content{padding:32px 20px;}
+            .contacts-grid{grid-template-columns:1fr;gap:32px;}
+        }
+        a:focus-visible,button:focus-visible,input:focus-visible,textarea:focus-visible{
+            outline:3px solid var(--focus);
+            outline-offset:2px;
+        }
+    </style>
+</head>
+<body>
+    <a href="#contact-form" class="skip-link">Перейти к форме связи</a>
+    
+    <header class="header" role="banner">
+        <div class="nav-container">
+            <a href="index.html" class="logo">🎧 ЗвукоСлово</a>
+            <nav role="navigation" aria-label="Главное меню">
+                <ul class="nav-links">
+                    <li><a href="index.html">Главная</a></li>
+                    <li><a href="catalog.html">Каталог</a></li>
+                    <li><a href="contacts.html" class="active" aria-current="page">Контакты</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+    
+    <main class="main-content" role="main">
+        <div class="page-header">
+            <h1>📬 Свяжитесь с нами</h1>
+            <p>Мы всегда рады помочь и ответить на ваши вопросы</p>
+        </div>
+        
+        <div class="contacts-grid">
+            <div class="contact-card">
+                <h2>Наши контакты</h2>
+                <ul class="info-list">
+                    <li><span class="info-icon" aria-hidden="true">📍</span><span>г. Москва, ул. Книжная, 15</span></li>
+                    <li><span class="info-icon" aria-hidden="true">📞</span><span>+7 (495) 123-45-67</span></li>
+                    <li><span class="info-icon" aria-hidden="true">✉️</span><span>info@zvukoslovo.ru</span></li>
+                    <li><span class="info-icon" aria-hidden="true">🕐</span><span>Пн-Пт: 10:00 - 20:00<br>Сб-Вс: 11:00 - 18:00</span></li>
+                </ul>
+                <div class="map-placeholder" aria-label="Карта проезда">
+                    <p>🗺️ <strong>Как добраться:</strong></p>
+                    <p>м. Книжная, выход №3, 5 минут пешком</p>
+                </div>
+            </div>
+            
+            <div class="contact-card">
+                <h2>Напишите нам</h2>
+                <form id="contactForm">
+                    <div class="form-group">
+                        <label for="name">Имя <span class="required" aria-hidden="true">*</span></label>
+                        <input type="text" id="name" name="name" required placeholder="Введите ваше имя">
+                        <div class="error-message">Пожалуйста, введите ваше имя</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="email">Email <span class="required" aria-hidden="true">*</span></label>
+                        <input type="email" id="email" name="email" required placeholder="camille@example.com">
+                        <div class="error-message">Введите корректный email (например, name@mail.ru)</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="topic">Тема обращения</label>
+                        <select id="topic" name="topic">
+                            <option value="question">📖 Вопрос о книгах</option>
+                            <option value="cooperation">🤝 Сотрудничество</option>
+                            <option value="problem">🔧 Техническая проблема</option>
+                            <option value="other">💬 Другое</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="message">Сообщение <span class="required" aria-hidden="true">*</span></label>
+                        <textarea id="message" name="message" rows="5" required placeholder="Опишите ваш вопрос или предложение..."></textarea>
+                        <div class="error-message">Пожалуйста, введите текст сообщения</div>
+                    </div>
+                    
+                    <button type="submit" class="btn-submit">✉️ Отправить сообщение</button>
+                    <div id="formStatus" class="form-status" role="status" aria-live="polite"></div>
+                </form>
+            </div>
+        </div>
+    </main>
+    
+    <footer class="footer" role="contentinfo">
+        <p>© 2026 ЗвукоСлово — библиотека аудиокниг</p>
+        <p style="font-size:0.85rem; margin-top:8px;">🎧 Слушайте с удовольствием</p>
+    </footer>
+    
+    <script>
+        var form = document.getElementById('contactForm');
+        var statusDiv = document.getElementById('formStatus');
+        
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            var name = document.getElementById('name');
+            var email = document.getElementById('email');
+            var message = document.getElementById('message');
+            var isValid = true;
+            
+            if (!name.value.trim()) {
+                showError(name);
+                isValid = false;
+            } else {
+                hideError(name);
+            }
+            
+            var emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!email.value.trim() || !emailRegex.test(email.value)) {
+                showError(email);
+                isValid = false;
+            } else {
+                hideError(email);
+            }
+            
+            if (!message.value.trim()) {
+                showError(message);
+                isValid = false;
+            } else {
+                hideError(message);
+            }
+            
+            if (isValid) {
+                statusDiv.className = 'form-status success';
+                statusDiv.textContent = '✓ Спасибо! Ваше сообщение отправлено. Мы ответим в ближайшее время.';
+                form.reset();
+                setTimeout(function() {
+                    statusDiv.className = 'form-status';
+                    statusDiv.textContent = '';
+                }, 5000);
+            } else {
+                statusDiv.className = 'form-status error';
+                statusDiv.textContent = '✗ Пожалуйста, заполните все обязательные поля корректно.';
+                setTimeout(function() {
+                    statusDiv.className = 'form-status';
+                    statusDiv.textContent = '';
+                }, 5000);
+            }
+        });
+        
+        function showError(field) {
+            field.style.borderColor = '#e74c3c';
+            var errorDiv = field.nextElementSibling;
+            if (errorDiv && errorDiv.classList.contains('error-message')) {
+                errorDiv.style.display = 'block';
+            }
+        }
+        
+        function hideError(field) {
+            field.style.borderColor = '#e1e8ed';
+            var errorDiv = field.nextElementSibling;
+            if (errorDiv && errorDiv.classList.contains('error-message')) {
+                errorDiv.style.display = 'none';
+            }
+        }
+        
+        document.getElementById('name').addEventListener('blur', function() {
+            if (!this.value.trim()) showError(this);
+            else hideError(this);
+        });
+        document.getElementById('email').addEventListener('blur', function() {
+            var regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!this.value.trim() || !regex.test(this.value)) showError(this);
+            else hideError(this);
+        });
+        document.getElementById('message').addEventListener('blur', function() {
+            if (!this.value.trim()) showError(this);
+            else hideError(this);
+        });
+    </script>
+</body>
+</html>
